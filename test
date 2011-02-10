@@ -4,14 +4,14 @@
 $:.push("./lib")
 require "fifocache"
 
-=begin
-cache = Fifocache::new(100000)
-100000.times do |i|
+
+cache = Fifocache::new(100000, :puts => false, :factor => 0)
+200000.times do |i|
     cache[i] = i
 end
 
 exit
-=end
+
 cache = Fifocache::new(3, :puts => true)
 cache[:alfa] = 'alfa'
 cache[:beta] = 'beta'

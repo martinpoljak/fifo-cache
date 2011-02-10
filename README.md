@@ -12,14 +12,14 @@ according these statistics. They are turned off by default, but can be
 turned on by setting `#factor` (or `:factor` in costructor) to another 
 value than `0`.
 
-*Handicap factor* is multiplier of the max hits count of all items in the 
-cache. It's important set it in some cases.
+*Handicap factor* is multiplier of the minimal hits count of all items 
+in the cache. It's important set it in some cases.
 
 If tracking is turned on and no handicap factor is explicitly set, 
 handicap 1 is assigned to new items. It's safe, but not very acceptable 
 because cache will become static after filling. So it's necessary (or at 
 least higly reasonable) to set priority weighting factor to number 
-between 1 and 0 according dynamics of your application.
+higher than 1 according dynamics of your application.
 
 Usage is simple (examples here are for demonstration purposes written
 without factor set):

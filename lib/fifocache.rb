@@ -55,7 +55,7 @@ class Fifocache
     ##
     # Indicates new items handicap factor.
     #
-    # Handicap factor is multiplier of the max hits count of an item in 
+    # Handicap factor is multiplier of the min hits count of all items in 
     # the cache. It's important set it in some cases. See {#[]=}.
     #
     # @return [Float]
@@ -93,7 +93,7 @@ class Fifocache
     # 1 is assigned to new items. It's safe, but not very acceptable 
     # because cache will become static after filling. So it's necessary 
     # (or at least higly reasonable) to set priority weighting factor to 
-    # number between 1 and 0 according dynamics of your application.
+    # number higher than 1 according dynamics of your application.
     #
     # @param [Object] key item key
     # @param [Object] item item value
@@ -200,9 +200,7 @@ class Fifocache
             @queue.delete_locator(locator)
             
             # Data holders
-            result = @data[key]
-            @data.delete(key)
-            @counts.delete(key)
+            result = __purge(key)
         else
             result = nil
         end
@@ -218,8 +216,8 @@ class Fifocache
     def clean!(count = 1)
         result = { }
         count.times do
-            dkey = @queue.find_min
-            result[dkey] = self.remove(dkey)  
+            dkey = @queue.delete_min
+            result[dkey] = __purge(dkey)  
             
             if @data.empty?
                 break
@@ -256,13 +254,25 @@ class Fifocache
     private
     
     ##
+    # Purges item from data holders.
+    #
+    
+    def __purge(key)
+        result = @data[key]
+        @data.delete(key)
+        @counts.delete(key)
+
+        return result
+    end
+    
+    ##
     # Returns new priority.
     #
     
     def __new_priority
         if (@puts or @hits) and (@factor != 0)
-            max = @queue.find_max_locator
-            priority = max.nil? ? 1 : (max.priority / @factor)
+            min = @queue.find_min_locator
+            priority = min.nil? ? 1 : (min.priority * @factor)
         else
             priority = 1
         end
