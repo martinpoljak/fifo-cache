@@ -104,6 +104,7 @@ class Fifocache
     #
     # @param [Object] key item key
     # @return [Boolean] +true+ it it is, +false+ otherwise
+    #
     
     def has_key?(key)
         @data.has_key? key
@@ -132,6 +133,7 @@ class Fifocache
     
     ##
     # Sets new size.
+    # @param [Integer] size new size
     #
     
     def size=(size)
