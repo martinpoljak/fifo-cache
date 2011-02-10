@@ -11,10 +11,10 @@ require "depq"
 # Also can be used in dynamic mode, so the less acessed cache records 
 # are removed instead of the oldest records in that case.
 #
-# For touches tracking utilizes heap queue.
+# For touches tracking utilizes implicit heap queue.
 #
     
-class FifoCache
+class Fifocache
 
     @data
     @queue
@@ -25,7 +25,7 @@ class FifoCache
     # @return [Integer] maximal size of the cache
     #
     
-    attr_accessor :size
+    attr_reader :size
     @size
     
     ##
@@ -75,9 +75,7 @@ class FifoCache
                 
             # Eventually removes first (last)
             if self.length > @size
-                dkey = @queue.delete_min
-                @data.delete(dkey)
-                @counts.delete(dkey)
+                self.clean!
             end
             
         else
@@ -132,4 +130,72 @@ class FifoCache
         @data.length
     end
     
+    ##
+    # Sets new size.
+    #
+    
+    def size=(size)
+        if size < self.length
+            self.clean(self.length - size)
+        end
+    end
+    
+    ##
+    # Removes key.
+    #
+    # @param [Object] key item key
+    # @return [Object] removed item value
+    #
+    
+    def remove(key)
+        if self.has_key? key
+            # Heap queue
+            locator = @counts[key]
+            @queue.delete_element(locator)
+            
+            # Data holders
+            result = @data[key]
+            @data.delete(key)
+            @counts.delete(key)
+        else
+            result = nil
+        end
+            
+        return result
+    end
+    
+    ##
+    # Cleans specified number of slots.
+    # @return [Hash] removed pairs
+    #
+    
+    def clean!(count = 1)
+        result = { }
+        count.times do
+            dkey = @queue.find_min
+            result[dkey] = self.remove(dkey)  
+            
+            if data.empty?
+                break
+            end
+        end
+        
+        return result
+    end
+    
+    alias :clean :"clean!"
+    
+    ##
+    # Clear whole cache.
+    #
+    
+    def clear!
+        @data.replace({ })
+        @counts.replace({ })
+        @queue = Depq::new
+    end
+    
+    alias :clear :"clear!"
+    
 end
+    
