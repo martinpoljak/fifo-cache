@@ -20,6 +20,8 @@ class Fifocache
     @queue
     @counts
     
+    INFINITY = 1.0/0
+    
     ##
     # Contains maximal size of the cache.
     # @return [Integer] maximal size of the cache
@@ -119,7 +121,11 @@ class Fifocache
     
     def touch(key)
         locator = @counts[key]
-        locator.update(key, locator.priority + 1)
+        priority = locator.priority + 1
+        
+        if priority != self.class::INFINITY
+            locator.update(key, locator.priority + 1)
+        end
     end
     
     ##
@@ -153,7 +159,7 @@ class Fifocache
         if self.has_key? key
             # Heap queue
             locator = @counts[key]
-            @queue.delete_element(locator)
+            @queue.delete_locator(locator)
             
             # Data holders
             result = @data[key]
@@ -177,7 +183,7 @@ class Fifocache
             dkey = @queue.find_min
             result[dkey] = self.remove(dkey)  
             
-            if data.empty?
+            if @data.empty?
                 break
             end
         end
@@ -194,10 +200,19 @@ class Fifocache
     def clear!
         @data.replace({ })
         @counts.replace({ })
-        @queue = Depq::new
+        @queue.clear
     end
     
     alias :clear :"clear!"
+    
+    ##
+    # Converts to hash.
+    # @return [Hash] cache data
+    #
+    
+    def to_h
+        @data.dup
+    end
     
 end
     
