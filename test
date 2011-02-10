@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+$:.push("./lib")
+require "fifocache"
+
+cache = Fifocache::new(3)
+cache[:alfa] = 'alfa'
+cache[:beta] = 'beta'
+cache[:gama] = 'gama'
+cache[:delta] = 'delta'     # in this moment, :alfa is removed
+
+puts cache.to_h.inspect
+
+cache[:beta] = 'beta'      # :beta, :gama, :delta in cache
+cache[:alfa] = 'alfa'      # :beta, :delta, :alfa in cache
+
+puts cache.to_h.inspect
+
+cache.mode = :dynamic       # you can do it in costructor too   
+puts cache[:delta]          # cache hit
+cache[:gama] = 'gama'       # :beta, :delta, :gama in cache
+
+puts cache.to_h.inspect
+
+cache.clean(2)
+
+puts cache.to_h.inspect
+
