@@ -5,11 +5,28 @@ FIFO Cache
 functionality which removes oldest or less accessed records based on 
 [implicit heap][1].
 
-Usage is simple:
+### Examples and Tracking & Handicap Factor
+
+Cache allows track both hits and puts and remove items from cache 
+according these statistics. They are turned off by default, but can be 
+turned on by setting `#factor` (or `:factor` in costructor) to another 
+value than `0`.
+
+*Handicap factor* is multiplier of the max hits count of all items in the 
+cache. It's important set it in some cases.
+
+If tracking is turned on and no handicap factor is explicitly set, 
+handicap 1 is assigned to new items. It's safe, but not very acceptable 
+because cache will become static after filling. So it's necessary (or at 
+least higly reasonable) to set priority weighting factor to number 
+between 1 and 0 according dynamics of your application.
+
+Usage is simple (examples here are for demonstration purposes written
+without factor set):
     
     require "fifocache"
     
-    cache = Fifocache::new(3)   # or 300000, od sure :-)
+    cache = Fifocache::new(3, :puts => true)   # or 300000, od sure :-)
     cache[:alfa] = 'alfa'
     cache[:beta] = 'beta'
     cache[:gama] = 'gama'
@@ -21,17 +38,17 @@ But multiple addings are tracked, so subsequent call:
     cache[:alfa] = 'alfa'      # :beta, :delta, :alfa in cache
     
 …will cause `:gama` will be removed, not `:beta` because `:beta` is 
-fresher now. And if you tune on *:dynamic mode*, also cache hits will 
-be tracked, so:
+fresher now. If hits tracking is turned on:
 
-    cache.mode = :dynamic       # you can do it in costructor too
+    cache.hits = true           # you can do it in costructor too
     
     puts cache[:delta]          # cache hit
     cache[:gama] = 'gama'       # :beta, :delta, :gama in cache
     
 …because `:beta` has been put-in two times, `:delta` has been hit 
 recently, so `:alfa` is less accessed row and has been removed. In case 
-of *:pure mode*, `:delta` would be removed of sure and `:alfa` kept.
+of hits tracking turned off, `:delta` would be removed of sure and 
+`:alfa` kept.
     
 Changing size of existing cache is possible although reducing the size
 is generally rather slow because of necessity to remove all redundant 

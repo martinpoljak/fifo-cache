@@ -1,6 +1,7 @@
 # encoding: utf-8
 # (c) 2010-2011 Martin Kozák (martinkozak@martinkozak.net)
 
+require "hash-utils/object"
 require "depq"
 
 ##
@@ -8,8 +9,9 @@ require "depq"
 # but with fixed capacity with FIFO funcionality.
 #
 # It's useful for limited size caches. Oldest cache records are removed.
-# Also can be used in dynamic mode, so the less acessed cache records 
-# are removed instead of the oldest records in that case.
+# Also can be used by dynamic mode, so the less putted or less accessed 
+# (or both) cache records are removed instead of the oldest records in 
+# that cases.
 #
 # For touches tracking utilizes implicit heap queue.
 #
@@ -19,6 +21,10 @@ class Fifocache
     @data
     @queue
     @counts
+    
+    ##
+    # Integer overflow protection.
+    #
     
     INFINITY = 1.0/0
     
@@ -31,37 +37,67 @@ class Fifocache
     @size
     
     ##
-    # Indicates mode of the cache.
-    # @return [:pure, :dynamic] mode of the cache
+    # Indicates puts should be tracked.
+    # @return [Boolean]
     #
     
-    attr_accessor :mode
-    @mode
+    attr_accessor :puts
+    @puts
+    
+    ##
+    # Indicates hits should be tracked.
+    # @return [Boolean]
+    #
+    
+    attr_accessor :hits
+    @hits
+    
+    ##
+    # Indicates new items handicap factor.
+    #
+    # Handicap factor is multiplier of the max hits count of an item in 
+    # the cache. It's important set it in some cases. See {#[]=}.
+    #
+    # @return [Float]
+    # @see #[]=
+    #
+    
+    attr_accessor :factor
+    @factor
 
     ##
     # Constructor. Initializes cache to appropriate size.
     #
     # @param [Integer] site size of the cache
-    # @param [:pure, :dynamic] mode mode of the caching (see class description)
+    # @param [Hash] opts tracking options
+    # @option opts [Boolean] :puts indicates, puts should be tracked
+    # @option opts [Boolean] :hits indicates, hits should be tracked
+    # @option opts [Float, Integer] :factor indicates new items priority correction factor
     #
     
-    def initialize(size, mode = :pure)
+    def initialize(size, opts = {  })
         @data = { }
         @queue = Depq::new
         @counts = { }
 
         @size = size
-        @mode = mode
+        @puts = opts[:puts].to_b
+        @hits = opts[:hits].to_b
+        @factor = opts[:factor].to_f
     end
 
     ##
     # Puts item with key to cache.
     #
-    # One item can be putted more times to cache. In this case is 
-    # relevant the latest put.
+    # If tracking is turned on and no {#factor} explicitly set, handicap
+    # 1 is assigned to new items. It's safe, but not very acceptable 
+    # because cache will become static after filling. So it's necessary 
+    # (or at least higly reasonable) to set priority weighting factor to 
+    # number between 1 and 0 according dynamics of your application.
     #
     # @param [Object] key item key
     # @param [Object] item item value
+    # @see #factor
     #
     
     def []=(key, item)
@@ -72,7 +108,7 @@ class Fifocache
         
             # Inserts to tracking structures
             @data[key] = item
-            locator = @queue.insert(key, 1)
+            locator = @queue.insert(key, __new_priority)
             @counts[key] = locator
                 
             # Eventually removes first (last)
@@ -80,7 +116,7 @@ class Fifocache
                 self.clean!
             end
             
-        else
+        elsif @puts
             self.touch(key)
         end
 
@@ -94,7 +130,7 @@ class Fifocache
     #
     
     def [](key)
-        if mode == :dynamic
+        if @hits
             self.touch(key)
         end
         
@@ -147,6 +183,8 @@ class Fifocache
             self.clean(self.length - size)
         end
     end
+    
+    alias :resize :"size="
     
     ##
     # Removes key.
@@ -212,6 +250,24 @@ class Fifocache
     
     def to_h
         @data.dup
+    end
+    
+    
+    private
+    
+    ##
+    # Returns new priority.
+    #
+    
+    def __new_priority
+        if (@puts or @hits) and (@factor != 0)
+            max = @queue.find_max_locator
+            priority = max.nil? ? 1 : (max.priority / @factor)
+        else
+            priority = 1
+        end
+        
+        return priority
     end
     
 end

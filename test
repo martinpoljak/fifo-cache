@@ -4,7 +4,15 @@
 $:.push("./lib")
 require "fifocache"
 
-cache = Fifocache::new(3)
+=begin
+cache = Fifocache::new(100000)
+100000.times do |i|
+    cache[i] = i
+end
+
+exit
+=end
+cache = Fifocache::new(3, :puts => true)
 cache[:alfa] = 'alfa'
 cache[:beta] = 'beta'
 cache[:gama] = 'gama'
@@ -17,13 +25,13 @@ cache[:alfa] = 'alfa'      # :beta, :delta, :alfa in cache
 
 puts cache.to_h.inspect
 
-cache.mode = :dynamic       # you can do it in costructor too   
+cache.hits = true           # you can do it in costructor too   
 puts cache[:delta]          # cache hit
 cache[:gama] = 'gama'       # :beta, :delta, :gama in cache
 
 puts cache.to_h.inspect
 
-cache.clean(2)
+cache.resize(0)
 
 puts cache.to_h.inspect
 
