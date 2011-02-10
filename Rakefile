@@ -13,7 +13,7 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "qrpc"
+  gem.name = "fifo-cache"
   gem.homepage = "http://github.com/martinkozak/fifo-cache"
   gem.license = "MIT"
   gem.summary = 'Fast hash-like fixed size cache class with FIFO functionality which removes oldest or less accessed records based on implicit heap.'
