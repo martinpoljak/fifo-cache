@@ -69,7 +69,7 @@ Contributing
 Copyright
 ---------
 
-Copyright &copy; 2011 [Martin Kozák][3]. See `LICENSE.txt` for
+Copyright &copy; 2010-2011 [Martin Kozák][3]. See `LICENSE.txt` for
 further details.
 
 [1]: http://www.cs.princeton.edu/courses/archive/spr09/cos423/Lectures/i-heaps.pdf
