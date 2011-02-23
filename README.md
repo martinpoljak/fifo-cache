@@ -73,5 +73,5 @@ Copyright &copy; 2010-2011 [Martin Kozák][3]. See `LICENSE.txt` for
 further details.
 
 [1]: http://www.cs.princeton.edu/courses/archive/spr09/cos423/Lectures/i-heaps.pdf
-[2]: http://github.com/martinkozak/qrpc/issues
+[2]: http://github.com/martinkozak/fifo-cache/issues
 [3]: http://www.martinkozak.net/
