@@ -1,5 +1,6 @@
 # encoding: utf-8
-# (c) 2010-2011 Martin Kozák (martinkozak@martinkozak.net)
+# (c) 2010-2013 Martin Kozák (martinkozak@martinkozak.net)
+# (c) 2013 Martin Poljak (martin@poljak.cz)
 
 require "hash-utils/object"
 require "depq"
@@ -157,9 +158,9 @@ class Fifocache
     
     def touch(key)
         locator = @counts[key]
-        priority = locator.priority + 1
-        
-        if priority != self.class::INFINITY
+
+        if locator and priority != self.class::INFINITY
+            priority = locator.priority + 1
             locator.update(key, locator.priority + 1)
         end
     end
