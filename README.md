@@ -69,9 +69,10 @@ Contributing
 Copyright
 ---------
 
-Copyright &copy; 2010-2011 [Martin Kozák][3]. See `LICENSE.txt` for
-further details.
+Copyright &copy; 2010-2013 [Martin Kozák][3], &copy; 2013 [Martin Poljak][4]. 
+See `LICENSE.txt` for further details.
 
 [1]: http://www.cs.princeton.edu/courses/archive/spr09/cos423/Lectures/i-heaps.pdf
 [2]: http://github.com/martinkozak/fifo-cache/issues
 [3]: http://www.martinkozak.net/
+[4]: http://www.martinpoljak.net/
