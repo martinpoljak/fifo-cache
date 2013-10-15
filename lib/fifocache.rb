@@ -159,8 +159,11 @@ class Fifocache
     def touch(key)
         locator = @counts[key]
 
-        if locator and priority != self.class::INFINITY
+        if locator
             priority = locator.priority + 1
+        end
+
+        if locator and priority != self.class::INFINITY
             locator.update(key, locator.priority + 1)
         end
     end
