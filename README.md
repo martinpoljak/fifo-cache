@@ -23,28 +23,34 @@ higher than 1 according dynamics of your application.
 
 Usage is simple (examples here are for demonstration purposes written
 without factor set):
-    
-    require "fifocache"
-    
-    cache = Fifocache::new(3, :puts => true)   # or 300000, od sure :-)
-    cache[:alfa] = 'alfa'
-    cache[:beta] = 'beta'
-    cache[:gama] = 'gama'
-    cache[:delta] = 'delta'     # in this moment, :alfa is removed
+
+```ruby
+require "fifocache"
+
+cache = Fifocache::new(3, :puts => true)   # or 300000, od sure :-)
+cache[:alfa] = 'alfa'
+cache[:beta] = 'beta'
+cache[:gama] = 'gama'
+cache[:delta] = 'delta'     # in this moment, :alfa is removed
+```
     
 But multiple addings are tracked, so subsequent call:
 
-    cache[:beta] = 'beta'      # :beta, :gama, :delta in cache
-    cache[:alfa] = 'alfa'      # :beta, :delta, :alfa in cache
-    
+```ruby
+cache[:beta] = 'beta'      # :beta, :gama, :delta in cache
+cache[:alfa] = 'alfa'      # :beta, :delta, :alfa in cache
+```
+
 …will cause `:gama` will be removed, not `:beta` because `:beta` is 
 fresher now. If hits tracking is turned on:
 
-    cache.hits = true           # you can do it in costructor too
-    
-    puts cache[:delta]          # cache hit
-    cache[:gama] = 'gama'       # :beta, :delta, :gama in cache
-    
+```ruby
+cache.hits = true           # you can do it in constructor too
+
+puts cache[:delta]          # cache hit
+cache[:gama] = 'gama'       # :beta, :delta, :gama in cache
+```
+
 …because `:beta` has been put-in two times, `:delta` has been hit 
 recently, so `:alfa` is less accessed row and has been removed. In case 
 of hits tracking turned off, `:delta` would be removed of sure and 
@@ -55,24 +61,12 @@ is generally rather slow because of necessity to remove all redundant
 "oldest" rows.
     
 
-Contributing
-------------
-
-1. Fork it.
-2. Create a branch (`git checkout -b 20101220-my-change`).
-3. Commit your changes (`git commit -am "Added something"`).
-4. Push to the branch (`git push origin 20101220-my-change`).
-5. Create an [Issue][2] with a link to your branch.
-6. Enjoy a refreshing Diet Coke and wait.
-
-
 Copyright
 ---------
 
-Copyright &copy; 2010-2013 [Martin Kozák][3], &copy; 2013 [Martin Poljak][4]. 
+Copyright &copy; 2010 &ndash; 2015 [Martin Poljak][3]. 
 See `LICENSE.txt` for further details.
 
 [1]: http://www.cs.princeton.edu/courses/archive/spr09/cos423/Lectures/i-heaps.pdf
 [2]: http://github.com/martinkozak/fifo-cache/issues
-[3]: http://www.martinkozak.net/
-[4]: http://www.martinpoljak.net/
+[3]: http://www.martinpoljak.net/

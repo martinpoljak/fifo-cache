@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/martinkozak/fifo-cache"
   gem.license = "MIT"
   gem.summary = 'Fast hash-like fixed size cache class with FIFO functionality which removes oldest or less accessed records based on implicit heap.'
-  gem.email = "martinkozak@martinkozak.net"
-  gem.authors = ["Martin Kozák"]
+  gem.email = "martin@poljak.cz"
+  gem.authors = ["Martin Poljak"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
