@@ -1,8 +1,6 @@
 # encoding: utf-8
-# (c) 2010-2013 Martin Kozák (martinkozak@martinkozak.net)
-# (c) 2013 Martin Poljak (martin@poljak.cz)
+# (c) 2010 - 2015 Martin Poljak (martin@poljak.cz)
 
-require "hash-utils/object"
 require "depq"
 
 ##
@@ -82,8 +80,8 @@ class Fifocache
         @counts = { }
 
         @size = size
-        @puts = opts[:puts].to_b
-        @hits = opts[:hits].to_b
+        @puts = !!opts[:puts]
+        @hits = !!opts[:hits]
         @factor = opts[:factor].to_f
     end
 
