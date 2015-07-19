@@ -5,12 +5,12 @@ $:.push("./lib")
 require "fifocache"
 
 
-cache = Fifocache::new(100000, :puts => false, :factor => 0)
-200000.times do |i|
-    cache[i] = i
-end
-
-exit
+# cache = Fifocache::new(100000, :puts => false, :factor => 0)
+# 200000.times do |i|
+#     cache[i] = i
+# end
+# 
+# exit
 
 cache = Fifocache::new(3, :puts => true)
 cache[:alfa] = 'alfa'
@@ -34,4 +34,3 @@ puts cache.to_h.inspect
 cache.resize(0)
 
 puts cache.to_h.inspect
-
